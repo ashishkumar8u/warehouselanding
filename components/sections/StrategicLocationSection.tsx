@@ -163,15 +163,15 @@ export function StrategicLocationSection() {
               >
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 bg-orange-500/10 rounded-lg flex items-center justify-center flex-shrink-0  transition-colors">
-                    <TrendingUp className="w-5 h-5 text-[#173c65] group-hover:text-white transition-colors" />
+                    <TrendingUp className="w-5 h-5 text-[#173c65]  transition-colors" />
                   </div>
 
                   <div>
-                    <h4 className="text-[#173c65] group-hover:text-white font-semibold mb-2 transition-colors">
+                    <h4 className="text-[#173c65]  font-semibold mb-2 transition-colors">
                       {item.title}
                     </h4>
 
-                    <p className="text-gray-600 group-hover:text-slate-200 text-sm leading-relaxed transition-colors">
+                    <p className="text-gray-600  text-sm leading-relaxed transition-colors">
                       {item.description}
                     </p>
                   </div>
