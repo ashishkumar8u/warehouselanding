@@ -1,0 +1,23 @@
+import logo from '../images/newmark-logo-black.png';
+import IndustrialFacility from '../images/IMG_0277.jpeg';
+import IndustrialFacilitytwo from '../images/IMG_0263.jpeg';
+import Fancing from './fencing.png'
+import Access from './access.webp'
+import Electrical from './electrical.jpg'
+import Water from './water.avif'
+import Services from './services.jpeg'
+import Land from './land.jpeg'
+// Warehouse videos - using paths instead of imports
+
+// Export all images
+export {
+    logo,
+    Fancing,
+    Access,
+    IndustrialFacility,
+    IndustrialFacilitytwo,
+    Electrical,
+    Water,
+    Services,
+    Land
+}
