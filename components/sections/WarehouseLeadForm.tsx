@@ -26,6 +26,7 @@ export function WarehouseLeadForm() {
     setErrorMessage("")
 
     try {
+      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
       const apiBase = (process.env.NEXT_PUBLIC_API_HOST || "http://192.168.1.202:8004").replace(/\/+$/, "")
       if (!apiBase) {
         throw new Error("API host is not configured")
@@ -44,6 +45,7 @@ export function WarehouseLeadForm() {
           lease_duration: formData.leaseDuration,
           timeline_to_move_in: formData.timeline,
           additional_information: formData.notes,
+          timezone,
         },
       }
 

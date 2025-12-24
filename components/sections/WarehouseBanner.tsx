@@ -14,7 +14,7 @@ export function WarehouseBanner() {
         priority
         fetchPriority="high"
         sizes="100vw"
-        className="object-cover o   "
+        className="object-cover opacity-30  xl:max-w-[1520px] mx-auto "
       />
       </div>
 

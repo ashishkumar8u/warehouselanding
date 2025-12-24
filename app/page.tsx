@@ -11,9 +11,9 @@ import { WarehouseLeadForm } from "@/components/sections/WarehouseLeadForm";
 
 export default function Home() {
   return (
-    <div className="w-full">
+    <div className="max-w-[1520px] mx-auto ">
       {/* Home Section */}
-      <section id="home" className="bg-gray-50">
+      <section id="home" className="bg-gray-50 ">
         <WarehouseBanner />
       </section>
 
@@ -23,10 +23,10 @@ export default function Home() {
       </section>
 
       {/* Specifications Section */}
-      <section id="specifications" className="min-h-screen  flex items-center justify-center bg-gray-50  ">
+      <section id="specifications" className="min-h-screen max-w-[1520px] mx-auto   flex items-center justify-center bg-gray-50  ">
         <SpecificationsSection />
       </section>
-      <section  className=" flex items-center justify-center bg-gray-50  ">
+      <section id="cta"  className=" flex items-center justify-center bg-gray-50  ">
         <WarehouseCTA />
       </section>
 
@@ -44,12 +44,12 @@ export default function Home() {
       <section id="applications" className="min-h-screen flex items-center justify-center bg-gray-50  ">
         <BuildToSuitLand />
       </section>
-      <section id="" className="py-6 flex items-center justify-center bg-gray-50  ">
+      <section id="info" className="py-6  flex items-center justify-center bg-gray-50  ">
         <LocationInfo />
       </section>
 
       {/* Contact Section */}
-      <section id="" className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8 py-0">
+      <section id="for" className="min-h-screen flex items-center justify-center bg-gray-50 px-4 sm:px-6 lg:px-8 py-0">
       <IdealFor />
       </section>
       <section id="contact" className="min-h-screen flex items-center justify-center bg-gray-50 px-4  ">

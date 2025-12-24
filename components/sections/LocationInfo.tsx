@@ -11,7 +11,7 @@ export function LocationInfo() {
   }
 
   return (
-    <div className="overflow-hidden border border-border/50 rounded-lg shadow-lg">
+    <div className="overflow-hidden border border-border/50 rounded-lg shadow-lg w-[95%] lg:w-[70%] xl:w-[45%]">
       <div className="bg-primary px-6 py-4 flex items-center gap-3">
         <h2 className="text-xl font-semibold text-[#173c65] tracking-wide">{address.facilityName}</h2>
       </div>

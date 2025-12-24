@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { logo } from "@/assets/images";
-import Link from "next/link";
 
 const NAV_ITEMS = [
   { id: "home", label: "Home" },
@@ -25,27 +24,34 @@ export function Navbar() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY + SCROLL_OFFSET;
-
+      const scrollPosition = window.scrollY + NAVBAR_OFFSET + 1;
+  
+      let currentSection = "";
+  
       for (const section of SECTIONS) {
         const element = document.getElementById(section);
-        if (element) {
-          const { offsetTop, offsetHeight } = element;
-          if (
-            scrollPosition >= offsetTop &&
-            scrollPosition < offsetTop + offsetHeight
-          ) {
-            setActiveSection(section);
-            break;
-          }
+        if (!element) continue;
+  
+        const offsetTop = element.offsetTop;
+        const offsetBottom = offsetTop + element.offsetHeight;
+  
+        if (scrollPosition >= offsetTop && scrollPosition < offsetBottom) {
+          currentSection = section;
+          break;
         }
       }
+  
+      if (currentSection !== activeSection) {
+        setActiveSection(currentSection);
+      }
     };
-
+  
     window.addEventListener("scroll", handleScroll);
-    handleScroll();
+    handleScroll(); // set on page load
+  
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [activeSection]);
+  
 
   const scrollToSection = (
     e: React.MouseEvent<HTMLAnchorElement>,
@@ -69,16 +75,17 @@ export function Navbar() {
   };
 
   const getNavLinkClassName = (sectionId: string) =>
-    `block py-2 transition-colors ${
+    `block py-2 transition-all duration-300 ${
       activeSection === sectionId
-        ? "text-[#173c65] font-medium"
+        ? "text-[#173c65] font-semibold border-b-2 border-[#173c65]"
         : "text-black hover:text-blue-700"
     }`;
+  
 
   const PHONE_NUMBER = "+52.55.5980.2011";
 
   return (
-    <nav className="sticky top-0 z-50 border-b bg-white">
+    <nav className="sticky top-0 z-50 border-b bg-white max-w-[1520px] mx-auto ">
       <div className="xl:max-w-7xl w-[95%] mx-auto ">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
