@@ -79,7 +79,7 @@ export function SpecificationsSection() {
                   {t.specifications.classAFeatures}
                 </h3>
                 <ul className="space-y-3 text-sm md:text-base leading-relaxed">
-                  {t.specifications.features.map((feature, index) => (
+                  {t.specifications.features.map((feature: string, index: number) => (
                     <li key={index} className="flex items-start gap-3">
                       <span className="text-muted-foreground mt-1">•</span>
                       <span>{feature}</span>

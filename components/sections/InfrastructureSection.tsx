@@ -97,7 +97,7 @@ export default function InfrastructureSection() {
                   </h2>
 
                   <ul className="space-y-3">
-                    {item.points.map((point, idx) => (
+                    {item.points.map((point: string, idx: number) => (
                       <li key={idx} className="flex items-start gap-3">
                         <Dot className=" w-8 h-8 text-blue-600 flex-shrink-0" />
                         <span className="text-gray-600 md:text-base text-sm leading-relaxed">

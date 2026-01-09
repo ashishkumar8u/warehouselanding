@@ -41,7 +41,7 @@ export function StrategicLocationSection() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {HIGHWAY_ROUTES.map((route) => (
+            {HIGHWAY_ROUTES.map((route: { title: string; description: string }) => (
               <div
                 key={route.title}
                 className="group relative bg-white backdrop-blur-sm rounded-2xl p-6 border border-slate-700/50 hover:border-orange-500/50 transition-all duration-300 hover:shadow-[0_0_30px_rgba(249,115,22,0.15)] hover:-translate-y-1"
@@ -111,7 +111,7 @@ export function StrategicLocationSection() {
 
           {/* Advantage Card 1 */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {advantages.map((item, index) => (
+            {advantages.map((item: { title: string; description: string }, index: number) => (
               <div
                 key={index}
                 className="relative bg-white backdrop-blur-sm rounded-xl p-6 border border-slate-700/50  transition-all duration-300 group"
