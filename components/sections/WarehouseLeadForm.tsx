@@ -1,38 +1,43 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { trackButtonClick } from "@/lib/utils"
+import type React from "react";
+import { useState } from "react";
+import { trackButtonClick } from "@/lib/utils";
 
 // Helper function to detect browser
 const detectBrowser = (): string => {
-  if (typeof window === "undefined") return "Unknown"
-  const ua = navigator.userAgent
-  if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome"
-  if (ua.includes("Firefox")) return "Firefox"
-  if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari"
-  if (ua.includes("Edg")) return "Edge"
-  if (ua.includes("Opera") || ua.includes("OPR")) return "Opera"
-  return "Unknown"
-}
+  if (typeof window === "undefined") return "Unknown";
+  const ua = navigator.userAgent;
+  if (ua.includes("Chrome") && !ua.includes("Edg")) return "Chrome";
+  if (ua.includes("Firefox")) return "Firefox";
+  if (ua.includes("Safari") && !ua.includes("Chrome")) return "Safari";
+  if (ua.includes("Edg")) return "Edge";
+  if (ua.includes("Opera") || ua.includes("OPR")) return "Opera";
+  return "Unknown";
+};
 
 // Helper function to detect device type
 const detectDeviceType = (): string => {
-  if (typeof window === "undefined") return "Unknown"
-  const ua = navigator.userAgent.toLowerCase()
-  const width = window.innerWidth
+  if (typeof window === "undefined") return "Unknown";
+  const ua = navigator.userAgent.toLowerCase();
+  const width = window.innerWidth;
 
-  if (/tablet|ipad|playbook|silk/i.test(ua)) return "Tablet"
-  if (/mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(ua)) return "Mobile"
-  if (width < 768) return "Mobile"
-  if (width < 1024) return "Tablet"
-  return "Desktop"
-}
+  if (/tablet|ipad|playbook|silk/i.test(ua)) return "Tablet";
+  if (
+    /mobile|iphone|ipod|android|blackberry|opera|mini|windows\sce|palm|smartphone|iemobile/i.test(
+      ua,
+    )
+  )
+    return "Mobile";
+  if (width < 768) return "Mobile";
+  if (width < 1024) return "Tablet";
+  return "Desktop";
+};
 
 export function WarehouseLeadForm() {
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [showToast, setShowToast] = useState(false)
-  const [errorMessage, setErrorMessage] = useState("")
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const [formData, setFormData] = useState({
     fullName: "",
     companyName: "",
@@ -44,49 +49,52 @@ export function WarehouseLeadForm() {
     leaseDuration: "",
     timeline: "",
     notes: "",
-  })
+  });
 
   const getClientIP = async (): Promise<string> => {
     try {
-      const response = await fetch("https://api.ipify.org?format=json")
-      const data = await response.json()
-      if (data?.ip) return data.ip
+      const response = await fetch("https://api.ipify.org?format=json");
+      const data = await response.json();
+      if (data?.ip) return data.ip;
     } catch {
       // ignore and try fallback
     }
 
     try {
-      const response = await fetch("https://ipapi.co/ip/")
-      const ip = await response.text()
-      return ip.trim() || ""
+      const response = await fetch("https://ipapi.co/ip/");
+      const ip = await response.text();
+      return ip.trim() || "";
     } catch {
-      return ""
+      return "";
     }
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitting(true)
-    setErrorMessage("")
+    e.preventDefault();
+    setIsSubmitting(true);
+    setErrorMessage("");
 
     try {
-      const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC"
-      const browser = detectBrowser()
-      const deviceType = detectDeviceType()
-      const clientIP = await getClientIP()
-      const apiBase = (process.env.NEXT_PUBLIC_API_HOST || "https://collection.apinext.in").replace(/\/+$/, "")
+      const timezone =
+        Intl.DateTimeFormat().resolvedOptions().timeZone || "UTC";
+      const browser = detectBrowser();
+      const deviceType = detectDeviceType();
+      const clientIP = await getClientIP();
+      const apiBase = `${process.env.NEXT_PUBLIC_BASE_URL}`.replace(/\/+$/, "");
       if (!apiBase) {
-        throw new Error("API host is not configured")
+        throw new Error("API host is not configured");
       }
 
       const payload = {
-        client_id: "983f1c31-e5b3-4b14-bff4-ae370010bd82",
+        client_id: `${process.env.NEXT_PUBLIC_CLIENT_ID}`,
+        project_id: process.env.NEXT_PUBLIC_PROJECT_ID,
         form_data: {
           full_name: formData.fullName,
           company_name: formData.companyName,
           email: formData.email,
           phone: formData.phone,
-          warehouse_size_sqft: Number(formData.warehouseSize) || formData.warehouseSize,
+          warehouse_size_sqft:
+            Number(formData.warehouseSize) || formData.warehouseSize,
           preferred_location: formData.location,
           monthly_budget: Number(formData.budget) || formData.budget,
           lease_duration: formData.leaseDuration,
@@ -97,24 +105,24 @@ export function WarehouseLeadForm() {
           browser,
           device_type: deviceType,
         },
-      }
+      };
 
       const response = await fetch(`${apiBase}/forms`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
-          "X-API-Key": "gAAAAABpVNqy0Gs3i5WxaEF6vk8slMC9IvWoR7S8iMMKWMXeLT49fcwpiBPWqV_GpGJYPKZb-oqZhpbHCpIrJXOjquwiFMPeGj9oy3i5rAUiM01P5QxXdxb-l30QN4MrvPWHiTSRSbIW",
+          "X-API-Key": `${process.env.NEXT_PUBLIC_API_KEY}`,
         },
         body: JSON.stringify(payload),
-      })
+      });
 
       if (!response.ok) {
-        throw new Error("Failed to submit form")
+        throw new Error("Failed to submit form");
       }
 
-      setShowToast(true)
-      setTimeout(() => setShowToast(false), 5000)
+      setShowToast(true);
+      setTimeout(() => setShowToast(false), 5000);
 
       // Reset form
       setFormData({
@@ -128,26 +136,30 @@ export function WarehouseLeadForm() {
         leaseDuration: "",
         timeline: "",
         notes: "",
-      })
+      });
     } catch {
-      setErrorMessage("Something went wrong while submitting. Please try again.")
+      setErrorMessage(
+        "Something went wrong while submitting. Please try again.",
+      );
     } finally {
-      setIsSubmitting(false)
+      setIsSubmitting(false);
     }
-  }
+  };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-  }
+    setFormData((prev) => ({ ...prev, [field]: value }));
+  };
 
   return (
     <>
       <div className="rounded-xl border  lg:w-[65%] border-neutral-200 bg-white shadow-lg mb-16">
         <div className="border-b border-neutral-200 bg-neutral-50/50 px-6 py-6 md:px-8">
-          <h2 className="text-xl   lg:text-2xl xl:text-3xl font-semibold text-[#173c65]">Warehouse Inquiry Form</h2>
+          <h2 className="text-xl   lg:text-2xl xl:text-3xl font-semibold text-[#173c65]">
+            Warehouse Inquiry Form
+          </h2>
           <p className="mt-2 md:text-base text-sm text-gray-600">
-          Share your requirements and we will match you with available warehouse spaces
-
+            Share your requirements and we will match you with available
+            warehouse spaces
           </p>
         </div>
 
@@ -161,13 +173,20 @@ export function WarehouseLeadForm() {
             {/* Contact Information Section */}
             <div className="space-y-6">
               <div className="border-l-4 border-[#173c65] pl-4">
-                <h3 className="text-lg font-semibold text-[#173c65]">Contact Information</h3>
-                <p className="text-sm text-neutral-600">Let us know how to reach you</p>
+                <h3 className="text-lg font-semibold text-[#173c65]">
+                  Contact Information
+                </h3>
+                <p className="text-sm text-neutral-600">
+                  Let us know how to reach you
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label htmlFor="fullName" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="fullName"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Full Name <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -182,7 +201,10 @@ export function WarehouseLeadForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="companyName" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="companyName"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Company Name <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -190,14 +212,19 @@ export function WarehouseLeadForm() {
                     type="text"
                     placeholder="Acme Corporation"
                     value={formData.companyName}
-                    onChange={(e) => handleChange("companyName", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("companyName", e.target.value)
+                    }
                     required
                     className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="email" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="email"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Email Address <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -212,7 +239,10 @@ export function WarehouseLeadForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="phone" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="phone"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Phone Number <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -231,14 +261,22 @@ export function WarehouseLeadForm() {
             {/* Warehouse Requirements Section */}
             <div className="space-y-6">
               <div className="border-l-4 border-[#173c65] pl-4">
-                <h3 className="text-lg font-semibold text-[#173c65]">Warehouse Requirements</h3>
-                <p className="text-sm text-neutral-600">Tell us about your space needs</p>
+                <h3 className="text-lg font-semibold text-[#173c65]">
+                  Warehouse Requirements
+                </h3>
+                <p className="text-sm text-neutral-600">
+                  Tell us about your space needs
+                </p>
               </div>
 
               <div className="grid gap-6 md:grid-cols-2">
                 <div className="space-y-2">
-                  <label htmlFor="warehouseSize" className="block text-sm font-medium text-neutral-700">
-                    Warehouse Size (sq ft) <span className="text-red-600">*</span>
+                  <label
+                    htmlFor="warehouseSize"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
+                    Warehouse Size (sq ft){" "}
+                    <span className="text-red-600">*</span>
                   </label>
                   <input
                     id="warehouseSize"
@@ -247,14 +285,19 @@ export function WarehouseLeadForm() {
                     step="1"
                     placeholder="4000"
                     value={formData.warehouseSize}
-                    onChange={(e) => handleChange("warehouseSize", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("warehouseSize", e.target.value)
+                    }
                     required
                     className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                   />
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="location" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="location"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Preferred Location <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -269,7 +312,10 @@ export function WarehouseLeadForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="budget" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="budget"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Monthly Budget <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -286,7 +332,10 @@ export function WarehouseLeadForm() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="leaseDuration" className="block text-sm font-medium text-neutral-700">
+                  <label
+                    htmlFor="leaseDuration"
+                    className="block text-sm font-medium text-neutral-700"
+                  >
                     Lease Duration <span className="text-red-600">*</span>
                   </label>
                   <input
@@ -294,7 +343,9 @@ export function WarehouseLeadForm() {
                     type="text"
                     placeholder="5 Years"
                     value={formData.leaseDuration}
-                    onChange={(e) => handleChange("leaseDuration", e.target.value)}
+                    onChange={(e) =>
+                      handleChange("leaseDuration", e.target.value)
+                    }
                     required
                     className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
                   />
@@ -302,7 +353,10 @@ export function WarehouseLeadForm() {
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="timeline" className="block text-sm font-medium text-neutral-700">
+                <label
+                  htmlFor="timeline"
+                  className="block text-sm font-medium text-neutral-700"
+                >
                   Timeline to Move In <span className="text-red-600">*</span>
                 </label>
                 <input
@@ -320,12 +374,19 @@ export function WarehouseLeadForm() {
             {/* Additional Information Section */}
             <div className="space-y-6">
               <div className="border-l-4 border-[#173c65] pl-4">
-                <h3 className="text-lg font-semibold text-[#173c65]">Additional Information</h3>
-                <p className="text-sm text-neutral-600">Any special requirements or questions?</p>
+                <h3 className="text-lg font-semibold text-[#173c65]">
+                  Additional Information
+                </h3>
+                <p className="text-sm text-neutral-600">
+                  Any special requirements or questions?
+                </p>
               </div>
 
               <div className="space-y-2">
-                <label htmlFor="notes" className="block text-sm font-medium text-neutral-700">
+                <label
+                  htmlFor="notes"
+                  className="block text-sm font-medium text-neutral-700"
+                >
                   Additional Notes
                 </label>
                 <textarea
@@ -346,13 +407,23 @@ export function WarehouseLeadForm() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                onClick={() => trackButtonClick('form-submit-inquiry')}
+                onClick={() => trackButtonClick("form-submit-inquiry")}
                 className="w-full rounded-lg bg-[#173c65] px-8 py-3 font-medium text-white transition-colors hover:bg-blue-800 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 sm:w-auto"
               >
                 {isSubmitting ? "Submitting..." : "Submit Inquiry"}
               </button>
             </div>
-            <p className=" text-xs text-center text-gray-600 ">This information has been prepared by Newmark for general information only. Newmark makes no warranties nor representations of any kind, express or implied, with respect to the information, including, but not limited to, warranties of content, accuracy, and reliability. Any interested party should make their own inquiries about the accuracy of the information. Newmark unequivocally excludes all inferred or implied terms, conditions and warranties arising from this document and excludes all liability for loss and damage arising therefrom.</p>
+            <p className=" text-xs text-center text-gray-600 ">
+              This information has been prepared by Newmark for general
+              information only. Newmark makes no warranties nor representations
+              of any kind, express or implied, with respect to the information,
+              including, but not limited to, warranties of content, accuracy,
+              and reliability. Any interested party should make their own
+              inquiries about the accuracy of the information. Newmark
+              unequivocally excludes all inferred or implied terms, conditions
+              and warranties arising from this document and excludes all
+              liability for loss and damage arising therefrom.
+            </p>
           </form>
         </div>
       </div>
@@ -360,9 +431,13 @@ export function WarehouseLeadForm() {
       {/* Toast Notification */}
       {showToast && (
         <div className="fixed bottom-4 right-4 z-50 max-w-md rounded-lg border border-green-200 bg-white p-4 shadow-lg">
-            <div className="flex items-start gap-3">
+          <div className="flex items-start gap-3">
             <div className="shrink-0 rounded-full bg-green-100 p-1">
-              <svg className="h-5 w-5 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+              <svg
+                className="h-5 w-5 text-green-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
                 <path
                   fillRule="evenodd"
                   d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
@@ -371,14 +446,17 @@ export function WarehouseLeadForm() {
               </svg>
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-neutral-900">Thank you for your inquiry!</h4>
+              <h4 className="font-semibold text-neutral-900">
+                Thank you for your inquiry!
+              </h4>
               <p className="mt-1 text-sm text-neutral-600">
-                Our team will contact you within 24 hours to discuss your warehouse needs.
+                Our team will contact you within 24 hours to discuss your
+                warehouse needs.
               </p>
             </div>
           </div>
         </div>
       )}
     </>
-  )
+  );
 }

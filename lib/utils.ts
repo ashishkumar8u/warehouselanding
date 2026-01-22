@@ -1,5 +1,5 @@
-import { type ClassValue, clsx } from 'clsx';
-import { twMerge } from 'tailwind-merge';
+import { type ClassValue, clsx } from "clsx";
+import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -49,19 +49,20 @@ export function trackButtonClick(buttonId: string): void {
       const timezone = getTimezone();
       const clientIP = await getClientIP();
 
-      await fetch('https://collection.apinext.in/forms/metadata', {
-        method: 'POST',
+      await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/metadata/metadata`, {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          Accept: 'application/json',
-          'X-API-Key': 'gAAAAABpVNqy0Gs3i5WxaEF6vk8slMC9IvWoR7S8iMMKWMXeLT49fcwpiBPWqV_GpGJYPKZb-oqZhpbHCpIrJXOjquwiFMPeGj9oy3i5rAUiM01P5QxXdxb-l30QN4MrvPWHiTSRSbIW',
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-API-Key": `${process.env.NEXT_PUBLIC_API_KEY}`,
         },
         body: JSON.stringify({
-          client_id: '983f1c31-e5b3-4b14-bff4-ae370010bd82',
-          button_id: buttonId,
-          count: 1,
-          ip_address: clientIP,
-          timezone: timezone,
+            project_id: process.env.NEXT_PUBLIC_PROJECT_ID,
+            client_id: process.env.NEXT_PUBLIC_CLIENT_ID,
+            button_id: buttonId,
+            count: 1,
+            ip_address: clientIP,
+            timezone: timezone,
         }),
       });
     } catch {
@@ -70,4 +71,3 @@ export function trackButtonClick(buttonId: string): void {
     }
   })();
 }
-
