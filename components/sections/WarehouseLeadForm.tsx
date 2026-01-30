@@ -3,6 +3,7 @@
 import type React from "react";
 import { useState } from "react";
 import { trackButtonClick } from "@/lib/utils";
+import { getUAParsed } from "@/utils/ua-parsed";
 
 // Helper function to detect browser
 const detectBrowser = (): string => {
@@ -34,10 +35,21 @@ const detectDeviceType = (): string => {
   return "Desktop";
 };
 
+// Validation helpers
+const NAME_REGEX = /^[a-zA-Z\s\-']*$/; // letters, spaces, hyphen, apostrophe only
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_LENGTH = /^\d{9,12}$/;  // 9–12 digits for validation
+
 export function WarehouseLeadForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<{
+    fullName?: string;
+    companyName?: string;
+    email?: string;
+    phone?: string;
+  }>({});
   const [formData, setFormData] = useState({
     fullName: "",
     companyName: "",
@@ -69,10 +81,47 @@ export function WarehouseLeadForm() {
     }
   };
 
+  const validateForm = (): boolean => {
+    const errors: typeof fieldErrors = {};
+    const trimmedName = formData.fullName.trim();
+    const trimmedCompany = formData.companyName.trim();
+    const trimmedEmail = formData.email.trim();
+    const phoneDigits = formData.phone.replace(/\D/g, "");
+
+    if (!trimmedName) {
+      errors.fullName = "Full name is required.";
+    } else if (!NAME_REGEX.test(trimmedName)) {
+      errors.fullName = "Full name can only contain letters, spaces, hyphens and apostrophes.";
+    }
+
+    if (!trimmedCompany) {
+      errors.companyName = "Company name is required.";
+    } else if (!NAME_REGEX.test(trimmedCompany)) {
+      errors.companyName = "Company name can only contain letters, spaces, hyphens and apostrophes.";
+    }
+
+    if (!trimmedEmail) {
+      errors.email = "Email is required.";
+    } else if (!EMAIL_REGEX.test(trimmedEmail)) {
+      errors.email = "Please enter a valid email address.";
+    }
+
+    if (!formData.phone.trim()) {
+      errors.phone = "Phone number is required.";
+    } else if (!PHONE_LENGTH.test(phoneDigits)) {
+      errors.phone = "Phone must be 9–12 digits (numbers only).";
+    }
+
+    setFieldErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsSubmitting(true);
+    setFieldErrors({});
     setErrorMessage("");
+    if (!validateForm()) return;
+    setIsSubmitting(true);
 
     try {
       const timezone =
@@ -80,6 +129,7 @@ export function WarehouseLeadForm() {
       const browser = detectBrowser();
       const deviceType = detectDeviceType();
       const clientIP = await getClientIP();
+       const ua_parsed = getUAParsed();
       const apiBase = `${process.env.NEXT_PUBLIC_BASE_URL}`.replace(/\/+$/, "");
       if (!apiBase) {
         throw new Error("API host is not configured");
@@ -104,6 +154,25 @@ export function WarehouseLeadForm() {
           ip_address: clientIP,
           browser,
           device_type: deviceType,
+           "other": {
+        "browser": {
+            "name": ua_parsed.browser.name ?? null,
+            "version": ua_parsed.browser.version ?? null
+        },
+        "device": {
+            "model": ua_parsed.device.model ?? null,
+            "type": ua_parsed.device.type ?? null,
+            "vendor": ua_parsed.device.vendor ?? null
+        },
+        "engine": {
+            "name": ua_parsed.engine.name ?? null,
+            "version": ua_parsed.engine.version ?? null
+        },
+        "os": {
+            "name": ua_parsed.os.name ?? null,
+            "version": ua_parsed.os.version ?? null
+        }
+    }
         },
       };
 
@@ -137,6 +206,7 @@ export function WarehouseLeadForm() {
         timeline: "",
         notes: "",
       });
+      setFieldErrors({});
     } catch {
       setErrorMessage(
         "Something went wrong while submitting. Please try again.",
@@ -147,7 +217,18 @@ export function WarehouseLeadForm() {
   };
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }));
+    let sanitized = value;
+    if (field === "fullName" || field === "companyName") {
+      // Allow only letters, spaces, hyphen, apostrophe
+      sanitized = value.replace(/[^a-zA-Z\s\-']/g, "");
+    } else if (field === "phone") {
+      // Allow only digits (9–12 digit validation on submit)
+      sanitized = value.replace(/\D/g, "");
+    }
+    setFormData((prev) => ({ ...prev, [field]: sanitized }));
+    if (fieldErrors[field as keyof typeof fieldErrors]) {
+      setFieldErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
   };
 
   return (
@@ -164,7 +245,7 @@ export function WarehouseLeadForm() {
         </div>
 
         <div className="px-6 py-8 md:px-8">
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form onSubmit={handleSubmit} className="space-y-8" noValidate>
             {errorMessage && (
               <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
                 {errorMessage}
@@ -196,8 +277,11 @@ export function WarehouseLeadForm() {
                     value={formData.fullName}
                     onChange={(e) => handleChange("fullName", e.target.value)}
                     required
-                    className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    className={`w-full rounded-lg border bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${fieldErrors.fullName ? "border-red-500 focus:border-red-500" : "border-neutral-300 focus:border-orange-500"}`}
                   />
+                  {fieldErrors.fullName && (
+                    <p className="text-sm text-red-600">{fieldErrors.fullName}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -216,8 +300,11 @@ export function WarehouseLeadForm() {
                       handleChange("companyName", e.target.value)
                     }
                     required
-                    className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    className={`w-full rounded-lg border bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${fieldErrors.companyName ? "border-red-500 focus:border-red-500" : "border-neutral-300 focus:border-orange-500"}`}
                   />
+                  {fieldErrors.companyName && (
+                    <p className="text-sm text-red-600">{fieldErrors.companyName}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -234,8 +321,11 @@ export function WarehouseLeadForm() {
                     value={formData.email}
                     onChange={(e) => handleChange("email", e.target.value)}
                     required
-                    className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    className={`w-full rounded-lg border bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${fieldErrors.email ? "border-red-500 focus:border-red-500" : "border-neutral-300 focus:border-orange-500"}`}
                   />
+                  {fieldErrors.email && (
+                    <p className="text-sm text-red-600">{fieldErrors.email}</p>
+                  )}
                 </div>
 
                 <div className="space-y-2">
@@ -248,12 +338,17 @@ export function WarehouseLeadForm() {
                   <input
                     id="phone"
                     type="tel"
-                    placeholder="+1 (555) 000-0000"
+                    inputMode="numeric"
+                    placeholder="9–12 digits (numbers only)"
                     value={formData.phone}
                     onChange={(e) => handleChange("phone", e.target.value)}
                     required
-                    className="w-full rounded-lg border border-neutral-300 bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20"
+                    maxLength={12}
+                    className={`w-full rounded-lg border bg-white px-4 py-2.5 text-neutral-900 placeholder:text-neutral-400 focus:outline-none focus:ring-2 focus:ring-orange-500/20 ${fieldErrors.phone ? "border-red-500 focus:border-red-500" : "border-neutral-300 focus:border-orange-500"}`}
                   />
+                  {fieldErrors.phone && (
+                    <p className="text-sm text-red-600">{fieldErrors.phone}</p>
+                  )}
                 </div>
               </div>
             </div>
