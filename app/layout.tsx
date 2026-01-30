@@ -45,7 +45,7 @@ export default function RootLayout({
         <link rel="preload" href="/bannerbg.webp" as="image" />
 
         {/* Google Analytics*/}
-        <script
+        {/* <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-0JVBRZEZC1"
         />
@@ -59,7 +59,7 @@ export default function RootLayout({
               gtag('config', 'G-0JVBRZEZC1');
             `,
           }}
-        />
+        /> */}
       </head>
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
