@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import Script from "next/script";
 import "./globals.css";
 import { Navbar } from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
@@ -45,19 +44,22 @@ export default function RootLayout({
         />
         <link rel="preload" href="/bannerbg.webp" as="image" />
 
-        {/* Google Analytics */}
-        <Script
+        {/* Google Analytics – HARD CODED */}
+        <script
+          async
           src="https://www.googletagmanager.com/gtag/js?id=G-0JVBRZEZC1"
-          strategy="afterInteractive"
         />
-        <Script id="google-analytics" strategy="afterInteractive">
-          {`
-            window.dataLayer = window.dataLayer || [];
-            function gtag(){dataLayer.push(arguments);}
-            gtag('js', new Date());
-            gtag('config', 'G-0JVBRZEZC1');
-          `}
-        </Script>
+
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-0JVBRZEZC1');
+            `,
+          }}
+        />
       </head>
 
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
