@@ -44,7 +44,7 @@ export default function RootLayout({
         />
         <link rel="preload" href="/bannerbg.webp" as="image" />
 
-        {/* Google Analytics – HARD CODED */}
+        {/* Google Analytics*/}
         <script
           async
           src="https://www.googletagmanager.com/gtag/js?id=G-0JVBRZEZC1"
