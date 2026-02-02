@@ -3,7 +3,7 @@
 
 import { useMemo } from 'react';
 import { warehouseConfig } from '@/config/warehouse-content';
-// import { useLanguage } from '@/contexts/language-context';
+import { useLanguage } from '@/contexts/language-context';
 
 // Spanish translations for warehouseConfig
 const spanishTranslations: any = {
@@ -221,6 +221,13 @@ const spanishTranslations: any = {
 // Additional UI translations
 const uiTranslations: Record<string, Record<string, string>> = {
   en: {
+    'nav.home': 'Home',
+    'nav.connectivity': 'Connectivity',
+    'nav.specifications': 'Specifications',
+    'nav.infrastructure': 'Infrastructure',
+    'nav.opportunities': 'Opportunities',
+    'nav.applications': 'Applications',
+    'nav.callNow': 'Call Now',
     'locationComparison.title': 'Choose Your Ideal Location',
     'locationComparison.subtitle': 'A strategic location, optimized for operational efficiency. Discover how it can perfectly support your business needs.',
     'locationComparison.keyAdvantages': 'Key Advantages',
@@ -253,6 +260,13 @@ const uiTranslations: Record<string, Record<string, string>> = {
     'footer.disclaimer': 'Disclaimer',
   },
   es: {
+    'nav.home': 'Inicio',
+    'nav.connectivity': 'Conectividad',
+    'nav.specifications': 'Especificaciones',
+    'nav.infrastructure': 'Infraestructura',
+    'nav.opportunities': 'Oportunidades',
+    'nav.applications': 'Aplicaciones',
+    'nav.callNow': 'Llamar Ahora',
     'locationComparison.title': 'Elija Su Ubicación Ideal',
     'locationComparison.subtitle': 'Una ubicación estratégica, optimizada para la eficiencia operativa. Descubra cómo puede apoyar perfectamente las necesidades de su negocio.',
     'locationComparison.keyAdvantages': 'Ventajas Clave',
@@ -287,35 +301,34 @@ const uiTranslations: Record<string, Record<string, string>> = {
 };
 
 export function useWarehouseConfig() {
-  
+  const { language } = useLanguage();
 
   return useMemo(() => {
-    // if (language === 'es') {
-    //   // Deep merge Spanish translations with original config
-    //   return {
-    //     ...warehouseConfig,
-    //     banner: { ...warehouseConfig.banner, ...spanishTranslations.banner },
-    //     warehouseFeatures: { ...warehouseConfig.warehouseFeatures, ...spanishTranslations.warehouseFeatures },
-    //     locations: { ...warehouseConfig.locations, ...spanishTranslations.locations },
-    //     specifications: { ...warehouseConfig.specifications, ...spanishTranslations.specifications },
-    //     targetIndustries: { ...warehouseConfig.targetIndustries, ...spanishTranslations.targetIndustries },
-    //     availability: { ...warehouseConfig.availability, ...spanishTranslations.availability },
-    //     ctas: { ...warehouseConfig.ctas, ...spanishTranslations.ctas },
-    //     leadForm: { ...warehouseConfig.leadForm, ...spanishTranslations.leadForm },
-    //     disclaimer: spanishTranslations.disclaimer,
-    //   };
-    // }
+    if (language === 'es') {
+      return {
+        ...warehouseConfig,
+        banner: { ...warehouseConfig.banner, ...spanishTranslations.banner },
+        warehouseFeatures: { ...warehouseConfig.warehouseFeatures, ...spanishTranslations.warehouseFeatures },
+        locations: { ...warehouseConfig.locations, ...spanishTranslations.locations },
+        specifications: { ...warehouseConfig.specifications, ...spanishTranslations.specifications },
+        targetIndustries: { ...warehouseConfig.targetIndustries, ...spanishTranslations.targetIndustries },
+        availability: { ...warehouseConfig.availability, ...spanishTranslations.availability },
+        ctas: { ...warehouseConfig.ctas, ...spanishTranslations.ctas },
+        leadForm: { ...warehouseConfig.leadForm, ...spanishTranslations.leadForm },
+        disclaimer: spanishTranslations.disclaimer,
+      };
+    }
     return warehouseConfig;
-  }, []);
+  }, [language]);
 }
 
 export function useUITranslations() {
-  // const { language, t } = useLanguage();
-  
+  const { language } = useLanguage();
+
   return useMemo(() => {
     return (key: string): string => {
-      return uiTranslations["es"]?.[key] || uiTranslations.en[key] || key;
+      return uiTranslations[language]?.[key] || uiTranslations.en[key] || key;
     };
-  }, []);
+  }, [language]);
 }
 

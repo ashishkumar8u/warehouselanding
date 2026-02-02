@@ -5,14 +5,16 @@ import Image from "next/image";
 import { Menu, X } from "lucide-react";
 import { logo } from "@/assets/images";
 import { trackButtonClick } from "@/lib/utils";
+import { useLanguage } from "@/contexts/language-context";
+import { useUITranslations } from "@/hooks/use-warehouse-config";
 
 const NAV_ITEMS = [
-  { id: "home", label: "Home" },
-  { id: "connectivity", label: "Connectivity" },
-  { id: "specifications", label: "Specifications" },
-  { id: "infrastructure", label: "Infrastructure" },
-  { id: "opportunities", label: "Opportunities" },
-  { id: "applications", label: "Applications" },
+  { id: "home", labelKey: "nav.home" },
+  { id: "connectivity", labelKey: "nav.connectivity" },
+  { id: "specifications", labelKey: "nav.specifications" },
+  { id: "infrastructure", labelKey: "nav.infrastructure" },
+  { id: "opportunities", labelKey: "nav.opportunities" },
+  { id: "applications", labelKey: "nav.applications" },
 ] as const;
 
 const SECTIONS = [...NAV_ITEMS.map((item) => item.id), "contact"] as const;
@@ -21,7 +23,8 @@ const NAVBAR_OFFSET = 80;
 export function Navbar() {
   const [activeSection, setActiveSection] = useState("");
   const [isOpen, setIsOpen] = useState(false);
-  const [language, setLanguage] = useState("en");
+  const { language, setLanguage } = useLanguage();
+  const t = useUITranslations();
 
   useEffect(() => {
     let ticking = false;
@@ -130,13 +133,13 @@ export function Navbar() {
             <button
               className="inline-flex items-center justify-center text-sm font-semibold text-[#173C65] bg-white border border-[#173C65] px-3 py-1.5 rounded-md shadow-sm hover:bg-[#EFF6FF] transition-colors"
               aria-label="Toggle language"
-              onClick={()=>setLanguage(prev=>prev=='en'?'es':'en')}
+              onClick={() => setLanguage((prev) => (prev === "en" ? "es" : "en"))}
             >
-              {language === 'en' ? 'ES' : 'EN'}
+              {language === "en" ? "ES" : "EN"}
             </button>
             <a
               href={`tel:${PHONE_NUMBER}`}
-              onClick={() => trackButtonClick('navbar-call-now-mobile')}
+              onClick={() => trackButtonClick("navbar-call-now-mobile")}
               className="bg-[#173c65] text-white text-nowrap rounded-full px-4 py-1.5 text-sm transition cursor-pointer hover:bg-blue-800"
             >
               Call Now
@@ -152,7 +155,7 @@ export function Navbar() {
                 onClick={(e) => scrollToSection(e, item.id)}
                 className={getNavLinkClassName(item.id)}
               >
-                {item.label}
+                {t(item.labelKey)}
               </a>
             ))}
           </div>
@@ -163,13 +166,13 @@ export function Navbar() {
              
               className="inline-flex items-center justify-center text-sm font-semibold text-[#173C65] bg-white border border-[#173C65] px-4 py-2 rounded-md shadow-sm hover:bg-[#EFF6FF] transition-colors"
               aria-label="Toggle language"
-              onClick={()=>setLanguage(prev=>prev=='en'?'es':'en')}
+              onClick={() => setLanguage((prev) => (prev === "en" ? "es" : "en"))}
             >
-              {language === 'en' ? 'ES' : 'EN'}
+              {language === "en" ? "ES" : "EN"}
             </button>
             <a
               href={`tel:${PHONE_NUMBER}`}
-              onClick={() => trackButtonClick('navbar-call-now-desktop')}
+              onClick={() => trackButtonClick("navbar-call-now-desktop")}
               className="bg-[#173c65] text-white text-nowrap rounded-full px-6 py-2   transition cursor-pointer hover:bg-blue-800"
             >
               Call Now
@@ -189,7 +192,7 @@ export function Navbar() {
                 onClick={(e) => scrollToSection(e, item.id)}
                 className={getNavLinkClassName(item.id)}
               >
-                {item.label}
+                {t(item.labelKey)}
               </a>
             ))}
 
