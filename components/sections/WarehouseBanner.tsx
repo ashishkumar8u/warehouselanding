@@ -17,7 +17,7 @@ export function WarehouseBanner() {
         priority
         fetchPriority="high"
         sizes="100vw"
-        className="object-cover opacity-20"
+        className="object-cover opacity-40"
         quality={85}
       />
       </div>
