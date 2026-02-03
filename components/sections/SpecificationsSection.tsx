@@ -45,7 +45,7 @@ export function SpecificationsSection() {
                         Building A
                       </p>
                       <span className="inline-flex items-center px-3 py-1 text-xs font-semibold tracking-wide uppercase bg-primary text-[#173c65] rounded-full">
-                        100% LEASED
+                        AVAILABLE: JUNE 2026
                       </span>
                     </div>
                     <p className="text-lg md:text-3xl text-[#173c65] font-bold">
@@ -54,20 +54,14 @@ export function SpecificationsSection() {
                   </div>
 
                   <div className="border-l-2 border-accent pl-4">
-                    <div className="flex items-start gap-10 mb-2">
-                      <p className="md:text-lg text-[#173c65] font-bold">
-                        Building B
-                      </p>
+                    <div className="flex items-start gap-23 mb-2">
+                      <p className="md:text-lg text-[#173c65] font-bold">Building B</p>
                       <span className="inline-flex items-center px-3 py-1 text-xs font-semibold tracking-wide uppercase border-2 border-accent text-[#173c65] rounded-full bg-transparent">
                         IMMEDIATE AVAILABILITY
                       </span>
                     </div>
-                    <p className="text-lg md:text-3xl text-[#173c65] font-bold mb-2">
-                      32,000 m²
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      Divisible Space
-                    </p>
+                    <p className="text-lg md:text-3xl text-[#173c65] font-bold mb-2">28,000 m²</p>
+                    <p className="text-sm text-muted-foreground">Divisible Space</p>
                   </div>
                 </div>
               </div>
